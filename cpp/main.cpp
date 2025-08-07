@@ -50,6 +50,32 @@ bool is_unique_chars4(string str) {
     return ranges::adjacent_find(str) == str.end();
 }
 
+/* 1.2 순열확인
+ */
+
+bool is_permutation1(string a, string b) {
+    if (a.size() != b.size()) return false;
+    ranges::sort(a);
+    ranges::sort(b);
+    return a == b;
+}
+
+bool is_permutation2(const string &a, const string &b) {
+    if (a.size() != b.size()) return false;
+
+    array<int, 128> letters{};
+    for (const char ch: a) letters[ch]++;
+    for (const char ch: b) {
+        letters[ch]--;
+        if (letters[ch] < 0) return false;
+    }
+    return true;
+}
+
+bool is_permutation3(const string &a, const string &b) {
+    return ranges::is_permutation(a, b);
+}
+
 int main() {
     return 0;
 }
