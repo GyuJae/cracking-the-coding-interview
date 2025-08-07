@@ -189,7 +189,48 @@ string compress(const string &s) {
     return out.size() < s.size() ? out : "";
 }
 
+// 1.7 행렬 회전
+using Pixel = uint32_t;
+
+void rotate90(vector<vector<Pixel>>& m) {
+    const size_t n = m.size();
+    if (n == 0) return;
+    for (const auto& row: m) {
+        if (row.size() != n) throw invalid_argument("Matrix must be NXM");
+    }
+
+    for (size_t layer = 0; layer < n / 2; layer++) {
+        size_t first = layer;
+        size_t last = n - 1 - layer;
+        for (size_t k = 0; k < last - first; k++) {
+            size_t top      = first;
+            size_t left     = first + k;
+            size_t bottom   = last;
+            size_t right    = last;
+
+            Pixel save                  = m[top][left];               // 위 → tmp
+            m[top][left]                = m[bottom - k][first];       // 왼 ↙ 위
+            m[bottom - k][first]        = m[bottom][right - k];       // 아래 ↖ 왼
+            m[bottom][right - k]        = m[top + k][right];          // 오 ↘ 아래
+            m[top + k][right]           = save;                       // tmp → 오
+        }
+    }
+}
+
 int main() {
-    cout << compress("aabcccccaaa") << endl;
+    vector<vector<Pixel>> img{
+            {1,  2,  3,  4},
+            {5,  6,  7,  8},
+            {9, 10, 11, 12},
+            {13,14, 15, 16}
+    };
+
+    rotate90(img);
+
+    for (const auto& row : img) {
+        for (const auto v : row) cout << v << ' ';
+        cout << '\n';
+    }
+
     return 0;
 }
