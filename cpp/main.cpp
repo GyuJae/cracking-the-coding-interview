@@ -131,8 +131,40 @@ bool is_permutation_of_palindrome2(const string &s) {
     return __builtin_popcount(bit) <= 1;
 }
 
+// 1.5 하나 빼기
+bool one_edit_away(const string &s1, const string &s2) {
+    const int n1 = s1.size(), n2 = s2.size();
+    if (n1 > n2 + 1 || n2 > n1 + 1) return false;
+
+    if (n1 == n2) {
+        bool diff_found = false;
+        for (size_t i = 0; i < n1; i++) {
+            if (s1[i] != s2[i]) {
+                if (diff_found) return false;
+                diff_found = true;
+            }
+        }
+        return true;
+    }
+
+    const string longS = (n1 > n2) ? s1 : s2;
+    const string shortS = (n1 > n2) ? s2 : s1;
+
+    size_t idxLong = 0, idxShort = 0;
+    bool skipped = false;
+    while (idxShort < shortS.size()) {
+        if (longS[idxLong] == shortS[idxShort]) {
+            ++idxShort; ++idxLong;
+        } else {
+            if (skipped) return false;
+            skipped = true;
+            ++idxLong;
+        }
+    }
+    return true;
+}
+
 int main() {
-    cout << is_permutation_of_palindrome("tact coa") << endl;
-    cout << is_permutation_of_palindrome2("tact coa") << endl;
+    cout << one_edit_away("pale",  "ple") << endl;
     return 0;
 }
