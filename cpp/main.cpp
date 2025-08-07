@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <array>
 #include <iomanip>
+#include <unordered_set>
 
 using namespace std;
 
@@ -274,9 +275,70 @@ bool isRotation(const string& s1, const string& s2) {
     return isSubstring(doubled, s2);
 }
 
+// 2.1 중복 없애기
+
+struct Node {
+    int data;
+    Node* next = nullptr;
+    explicit Node(const int v) : data(v) {}
+};
+
+void remove_duplicates(Node* head) {
+    if (!head) return;
+
+    unordered_set<int> seen;
+    seen.insert(head->data);
+
+    Node* prev = head;
+    Node* cur = head->next;
+
+    while (cur) {
+        if (seen.count(cur->data)) {
+            prev->next = cur->next;
+            delete cur;
+            cur = prev->next;
+        } else {
+            seen.insert(cur->data);
+            prev = cur;
+            cur = cur->next;
+        }
+    }
+}
+
+void remove_duplicates_no_buffer(Node* head) {
+    for (Node* current = head; current; current = current->next) {
+        Node* prev = current;
+        Node* runner = current->next;
+        while (runner) {
+            if (runner->data == current->data) {
+                prev->next = runner->next;   // 중복 삭제
+                delete runner;
+                runner = prev->next;
+            } else {
+                prev    = runner;
+                runner  = runner->next;
+            }
+        }
+    }
+}
+
 int main() {
-    cout << boolalpha;
-    cout << isRotation("waterbottle", "erbottlewat") << '\n'; // true
-    cout << isRotation("camera", "macera")        << '\n';    // false
+    Node* h = new Node(7);
+    h->next = new Node(3);
+    h->next->next = new Node(5);
+    h->next->next->next = new Node(3);
+    h->next->next->next->next = new Node(7);
+    h->next->next->next->next->next = new Node(9);
+
+    remove_duplicates_no_buffer(h);
+
+    for (Node* p = h; p; p = p->next) cout << p->data << ' ';
+    cout << '\n';
+
+    while (h) {
+        const auto temp = h->next;
+        delete h;
+        h = temp;
+    }
     return 0;
 }
