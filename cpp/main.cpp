@@ -76,6 +76,32 @@ bool is_permutation3(const string &a, const string &b) {
     return ranges::is_permutation(a, b);
 }
 
+// 1.3 URLify
+void urlify(string& s, size_t trueLen) {
+    // 1) 공백 개수
+    size_t spaces = 0;
+    for (size_t i = 0; i < trueLen; ++i)
+        if (s[i] == ' ') ++spaces;
+
+    // 2) 새 길이 = trueLen + spaces*2
+    size_t write = trueLen + spaces * 2;
+    s.resize(write);
+
+    // 3) 뒤에서 앞으로 복사
+    for (size_t read = trueLen; read-- > 0; ) {
+        if (s[read] == ' ') {
+            s[--write] = '0';
+            s[--write] = '2';
+            s[--write] = '%';
+        } else {
+            s[--write] = s[read];
+        }
+    }
+}
+
 int main() {
+    std::string buf = "Mr John Smith    "; // 여분 4칸(공백 2개×2) 확보
+    urlify(buf, 13);                       // 'Mr John Smith' 길이=13
+    std::cout << buf << '\n';              // Mr%20John%20Smith
     return 0;
 }
