@@ -99,9 +99,40 @@ void urlify(string& s, size_t trueLen) {
     }
 }
 
+// 1.4 회문 수열
+bool is_permutation_of_palindrome(const string &s) {
+    array<int, 128> freq{};
+    for (unsigned char ch: s) {
+        if (ch < 'a' || ch > 'z') continue;
+        if (ch == ' ') continue;
+        ch = tolower(ch);
+        ++freq[ch];
+    }
+
+    bool oddFound = false;
+    for (const int cnt: freq) {
+        if (cnt & 1) {
+            if (oddFound) return false;
+            oddFound = true;
+        }
+    }
+    return true;
+}
+
+bool is_permutation_of_palindrome2(const string &s) {
+    int bit = 0;
+    for (unsigned char ch: s) {
+        if (ch == ' ') continue;
+        ch = tolower(ch);
+        if (ch < 'a' || ch > 'z') continue;
+        int idx = ch - 'a';
+        bit ^= (1 << idx);
+    }
+    return __builtin_popcount(bit) <= 1;
+}
+
 int main() {
-    std::string buf = "Mr John Smith    "; // 여분 4칸(공백 2개×2) 확보
-    urlify(buf, 13);                       // 'Mr John Smith' 길이=13
-    std::cout << buf << '\n';              // Mr%20John%20Smith
+    cout << is_permutation_of_palindrome("tact coa") << endl;
+    cout << is_permutation_of_palindrome2("tact coa") << endl;
     return 0;
 }
