@@ -164,7 +164,32 @@ bool one_edit_away(const string &s1, const string &s2) {
     return true;
 }
 
+// 1.6 문자열 압축
+string compress(const string &s) {
+    if (s.empty()) return "";
+
+    string out;
+    out.reserve(s.size());
+
+    char current = s[0];
+    size_t count = 1;
+
+    for (size_t i = 1; i < s.size(); ++i) {
+        if (s[i] == current) count++;
+        else {
+            out += current;
+            out += to_string(count);
+            current = s[i];
+            count = 1;
+        }
+    }
+
+    out += current;
+    out += to_string(count);
+    return out.size() < s.size() ? out : "";
+}
+
 int main() {
-    cout << one_edit_away("pale",  "ple") << endl;
+    cout << compress("aabcccccaaa") << endl;
     return 0;
 }
