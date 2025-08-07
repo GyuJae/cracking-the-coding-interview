@@ -1,16 +1,55 @@
 #include <iostream>
+#include <string>
+#include <vector>
+#include <bitset>
+#include <algorithm>
+#include <array>
 
-// TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-int main() {
-    // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the <b>lang</b> variable name to see how CLion can help you rename it.
-    auto lang = "C++";
-    std::cout << "Hello and welcome to " << lang << "!\n";
+using namespace std;
 
-    for (int i = 1; i <= 5; i++) {
-        // TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        std::cout << "i = " << i << std::endl;
+/* 1.1 중복이 없는가
+ * - ASCII 문자열인지, 유니코드 문자열인지 구분필요
+ * -
+ */
+
+bool is_unique_chars(const string &str) {
+    array<bool, 26> seen{};
+    for (const auto ch: str) {
+        if (ch < 'a' || ch > 'z') return false;
+        const int idx = ch - 'a';
+        if (seen[idx]) return false;
+        seen[idx] = true;
     }
+    return true;
+}
 
+bool is_unique_chars2(const string &str) {
+    int seen = 0;
+    for (const auto ch: str) {
+        if (ch < 'a' || ch > 'z') return false;
+        const int idx = ch - 'a';
+        if (seen & (1 << idx)) return false;
+        seen |= (1 << idx);
+    }
+    return true;
+}
+
+bool is_unique_chars3(const string &str) {
+    if (str.size() > 128) return false;
+    bitset<128> seen;
+    for (const unsigned char ch: str) {
+        if (seen.test(ch)) return false;
+        seen.set(ch);
+    }
+    return true;
+}
+
+bool is_unique_chars4(string str) {
+    if (str.size() > 128) return false;
+    ranges::sort(str);
+    return ranges::adjacent_find(str) == str.end();
+}
+
+int main() {
     return 0;
-    // TIP See CLion help at <a href="https://www.jetbrains.com/help/clion/">jetbrains.com/help/clion/</a>. Also, you can try interactive lessons for CLion by selecting 'Help | Learn IDE Features' from the main menu.
 }
