@@ -4,6 +4,7 @@
 #include <bitset>
 #include <algorithm>
 #include <array>
+#include <iomanip>
 
 using namespace std;
 
@@ -217,18 +218,60 @@ void rotate90(vector<vector<Pixel>>& m) {
     }
 }
 
+// 1.8 0 행렬
+void zeroMatrix(vector<vector<int>>& mat) {
+    size_t m = mat.size();
+    if (m == 0) return;
+    size_t n = mat[0].size();
+
+    bool row0HasZero = false, col0HasZero = false;
+    for (size_t j = 0; j < n; j++) {
+        if (mat[0][j] == 0) {
+            row0HasZero = true;
+            break;
+        }
+    }
+
+    for (size_t i = 0; i < m; i++) {
+        if (mat[i][0] == 0) {
+            col0HasZero = true;
+            break;
+        }
+    }
+
+    for (size_t i = 1; i < m; i++) {
+        for (size_t j = 0; j < n; j++) {
+            if (mat[i][j] == 0) {
+                mat[i][0] = 0;
+                mat[0][j] = 0;
+            }
+        }
+    }
+
+    for (size_t i = 1; i < m; ++i)
+        for (size_t j = 1; j < n; ++j)
+            if (mat[i][0] == 0 || mat[0][j] == 0)
+                mat[i][j] = 0;
+
+    if (row0HasZero)
+        for (size_t j = 0; j < n; ++j) mat[0][j] = 0;
+
+    if (col0HasZero)
+        for (size_t i = 0; i < m; ++i) mat[i][0] = 0;
+}
+
 int main() {
-    vector<vector<Pixel>> img{
-            {1,  2,  3,  4},
-            {5,  6,  7,  8},
-            {9, 10, 11, 12},
-            {13,14, 15, 16}
+    vector<vector<int>> a{
+            {1, 2, 0, 4},
+            {5, 6, 7, 8},
+            {9, 0,11,12},
+            {13,14,15,16}
     };
 
-    rotate90(img);
+    zeroMatrix(a);
 
-    for (const auto& row : img) {
-        for (const auto v : row) cout << v << ' ';
+    for (auto& row : a) {
+        for (int v : row) cout << setw(3) << v;
         cout << '\n';
     }
 
