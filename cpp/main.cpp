@@ -260,20 +260,23 @@ void zeroMatrix(vector<vector<int>>& mat) {
         for (size_t i = 0; i < m; ++i) mat[i][0] = 0;
 }
 
+// 1.9 문자열 회전
+bool isSubstring(const string& big, const string& small) {
+    return big.find(small) != string::npos;
+}
+
+bool isRotation(const string& s1, const string& s2) {
+    const size_t n = s1.size();
+    if (n == 0 || n != s2.size()) return false;
+
+    // s1을 두 번 이어붙임
+    const string doubled = s1 + s1;
+    return isSubstring(doubled, s2);
+}
+
 int main() {
-    vector<vector<int>> a{
-            {1, 2, 0, 4},
-            {5, 6, 7, 8},
-            {9, 0,11,12},
-            {13,14,15,16}
-    };
-
-    zeroMatrix(a);
-
-    for (auto& row : a) {
-        for (int v : row) cout << setw(3) << v;
-        cout << '\n';
-    }
-
+    cout << boolalpha;
+    cout << isRotation("waterbottle", "erbottlewat") << '\n'; // true
+    cout << isRotation("camera", "macera")        << '\n';    // false
     return 0;
 }
