@@ -6,6 +6,7 @@
 #include <array>
 #include <iomanip>
 #include <unordered_set>
+#include <memory>
 
 using namespace std;
 
@@ -322,23 +323,55 @@ void remove_duplicates_no_buffer(Node* head) {
     }
 }
 
-int main() {
-    Node* h = new Node(7);
-    h->next = new Node(3);
-    h->next->next = new Node(5);
-    h->next->next->next = new Node(3);
-    h->next->next->next->next = new Node(7);
-    h->next->next->next->next->next = new Node(9);
+// 2.2 뒤에서 k번째 원소 구하기
+struct SharedNode {
+    int data;
+    shared_ptr<SharedNode> next;
+    explicit SharedNode(const int d): data(d), next(nullptr) {}
+};
 
-    remove_duplicates_no_buffer(h);
+shared_ptr<SharedNode> kthToLast(const shared_ptr<SharedNode> &head, const int k) {
+    if (!head || k <= 0) return nullptr;
 
-    for (Node* p = h; p; p = p->next) cout << p->data << ' ';
-    cout << '\n';
+    auto first = head;
+    auto second = head;
 
-    while (h) {
-        const auto temp = h->next;
-        delete h;
-        h = temp;
+    for (int i = 0; i < k; i++) {
+        if (!first) return nullptr;
+        first = first->next;
     }
+
+    while (first) {
+        first = first->next;
+        second = second ->next;
+    }
+
+    return second;
+}
+
+shared_ptr<SharedNode> kthToLast2(const shared_ptr<SharedNode> &head, const int k, int& counter) {
+    if (head == nullptr) return nullptr;
+
+    shared_ptr<SharedNode> nd = kthToLast2(head->next, k, counter);
+    counter++;
+    if (k == counter) return head;
+    return nd;
+}
+
+int main() {
+    auto head = make_shared<SharedNode>(7);
+    head->next = make_shared<SharedNode>(3);
+    head->next->next = make_shared<SharedNode>(5);
+    head->next->next->next = make_shared<SharedNode>(8);
+    head->next->next->next->next = make_shared<SharedNode>(2);
+
+    int k = 2;
+    int counter = 0;
+    auto result = kthToLast2(head, k, counter);
+
+    if (result)
+        cout << k << "번째 뒤 원소: " << result->data << "\n";
+    else
+        cout << "리스트 길이가 " << k << "보다 짧음\n";
     return 0;
 }
