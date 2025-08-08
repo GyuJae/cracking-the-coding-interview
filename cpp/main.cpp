@@ -358,20 +358,31 @@ shared_ptr<SharedNode> kthToLast2(const shared_ptr<SharedNode> &head, const int 
     return nd;
 }
 
+// 2.3 중간 노드 삭제
+bool deleteNode(Node* node) {
+    if (!node || !node->next) return false;
+    const Node* temp = node->next;
+    node->data = temp->data;
+    node->next = temp->next;
+    delete temp;
+    return true;
+}
+
 int main() {
-    auto head = make_shared<SharedNode>(7);
-    head->next = make_shared<SharedNode>(3);
-    head->next->next = make_shared<SharedNode>(5);
-    head->next->next->next = make_shared<SharedNode>(8);
-    head->next->next->next->next = make_shared<SharedNode>(2);
+    auto head = new Node(1);
+    head->next = new Node(2);
+    head->next->next = new Node(3);
+    head->next->next->next = new Node(4);
 
-    int k = 2;
-    int counter = 0;
-    auto result = kthToLast2(head, k, counter);
+    deleteNode(head->next); // 값이 2인 노드를 삭제
 
-    if (result)
-        cout << k << "번째 뒤 원소: " << result->data << "\n";
-    else
-        cout << "리스트 길이가 " << k << "보다 짧음\n";
+    for (Node* p = head; p; p = p->next) cout << p->data << ' ';
+    cout << '\n';
+
+    while (head) { // 메모리 해제
+        Node* temp = head->next;
+        delete head;
+        head = temp;
+    }
     return 0;
 }
